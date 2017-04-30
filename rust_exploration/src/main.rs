@@ -15,10 +15,21 @@ fn find_path(lines: &Vec<String>) {
   for line in lines {
       println!("{0}", line);
   }
+}
 
+fn find_start(lines: &Vec<String>) -> (usize, usize) {
+    for (y,line) in lines.iter().enumerate() {
+        for (x,c) in line.chars().enumerate() {
+            if c == 'S' {
+                return (x,y);
+            }
+        }
+    }
+    return (0,0);
 }
 
 fn main() {
     let lines = lines_from_file("maze_config");
-    find_path(&lines);
+    // find_path(&lines);
+    let (x,y) = find_start(&lines);
 }
