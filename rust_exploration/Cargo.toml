@@ -1,7 +1,0 @@
-[package]
-name = "rust_exploration"
-version = "0.1.0"
-authors = ["gdaly"]
-
-[dependencies]
-rayon = "0.7.0"
