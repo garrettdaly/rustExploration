@@ -28,7 +28,20 @@ fn find_start(lines: &Vec<String>) -> Option<(usize, usize)> {
     return None;
 }
 
+fn find_end(lines: &Vec<String>) -> Option<(usize, usize)> {
+    for (y,line) in lines.iter().enumerate() {
+        for (x,c) in line.chars().enumerate() {
+            if c == 'E' {
+                return Some((x,y));
+            }
+        }
+    }
+    return None;
+}
+
 fn main() {
     let lines = lines_from_file("maze_config");
-    let (x,y) = find_start(&lines).expect("You didn't specify a start point!");
+    let (sx,sy) = find_start(&lines).expect("You didn't specify a start point!");
+    let (ex,ey) = find_end(&lines).expect("You didn't specify an end point!");
+    println!("({},{}) -> ({},{})", sx, sy, ex, ey);
 }
