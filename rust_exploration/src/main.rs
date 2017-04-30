@@ -21,8 +21,4 @@ fn find_path(lines: &Vec<String>) {
 fn main() {
     let lines = lines_from_file("maze_config");
     find_path(&lines);
-    for line in lines {
-        println!("{0}", line);
-    }
-
 }
