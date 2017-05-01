@@ -21,12 +21,13 @@ struct Maze<'a> {
 }
 
 fn find_path(lines: &Vec<String>) {
-  let (sx,sy) = find_start(&lines).expect("You didn't specify a start point!");
-  let (ex,ey) = find_end(&lines).expect("You didn't specify an end point!");
+    // Ensure that user has valid start and end
+    let (sx,sy) = find_start(&lines).expect("You didn't specify a start point!");
+    let (ex,ey) = find_end(&lines).expect("You didn't specify an end point!");
 
-  let m = lines.iter().map(|l| l.chars().collect::<Vec<char>>()).collect();
+    let m = lines.iter().map(|l| l.chars().collect::<Vec<char>>()).collect();
 
-  recurse(Maze {grid: &m, sx: &sx, sy: &sy, ex: &ex, ey: &ey});
+    recurse(Maze {grid: &m, sx: &sx, sy: &sy, ex: &ex, ey: &ey});
 }
 
 fn recurse(maze: Maze) {
@@ -56,10 +57,12 @@ fn find_start(lines: &Vec<String>) -> Option<(usize, usize)> {
     for (y,line) in lines.iter().enumerate() {
         for (x,c) in line.chars().enumerate() {
             if c == 'S' {
+                // Like Haskell's Just
                 return Some((x,y));
             }
         }
     }
+    // Like Haskell's Nothing
     return None;
 }
 
