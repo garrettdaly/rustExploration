@@ -14,11 +14,20 @@ fn lines_from_file<P>(filename: P) -> Vec<String>
 
 struct Maze<'a> {
     grid: &'a Vec<Vec<char>>,
+    path: Vec<(usize,usize)>,
     sx: &'a usize,
     sy: &'a usize,
     ex: &'a usize,
     ey: &'a usize,
 }
+// struct Maze<'a> {
+//     grid: &'a Vec<Vec<char>>,
+//     path: Vec<(usize,usize)>,
+//     sx: usize,
+//     sy: usize,
+//     ex: &'a usize,
+//     ey: &'a usize,
+// }
 
 fn find_path(lines: &Vec<String>) {
     // Ensure that user has valid start and end
@@ -32,7 +41,18 @@ fn find_path(lines: &Vec<String>) {
     // println!("ex={0}, ey={1}", ex, ey);
 
     // let path = recurse(Maze {grid: &m, sx: &sx, sy: &sy, ex: &ex, ey: &ey});
-    recurse(Maze {grid: &m, sx: &sx, sy: &sy, ex: &ex, ey: &ey});
+    recurse(Maze {grid: &m, path: vec![(sx,sy)], sx: &sx, sy: &sy, ex: &ex, ey: &ey});
+}
+
+impl<'a> Maze<'a> {
+    fn push_path(&self, (x,y): (usize, usize)) -> Maze {
+        let mut nm = *self;
+        nm.path.push((x,y));
+        nm.sx = &x;
+        nm.sy = &y;
+        return nm;
+        // let mut pp = &mut *(maze.path);
+    }
 }
 
 fn recurse(maze: Maze) {
@@ -42,22 +62,33 @@ fn recurse(maze: Maze) {
         println!("Found ending, returning maze");
     }
 
+    // let pp = *maze.path;
+    if adj.len() > 1 { // Fork in the path
+        for adj_place in adj {
+            let next_maze = maze.push_path(adj_place);
+
+            // let (new_sx, new_sy) = adj_place;
+            let child_threads = thread::spawn(move || {
+                //thread that calls another recurse
+                // println!("Spawning recurse thread");
+                println!("Child thread: {:?}", next_maze.path);
+                //recurse(next_maze);
+
+            });
+        }
+    } else {
+        let next_maze = maze.push_path(adj[0]);
+        println!("Parent thread: {:?}", next_maze.path);
+        // recurse(next_maze);
+    }
+
     //make the new maze for next recursion
-    let mut new_grid = &maze.grid;
-    let possible_num = new_grid[*maze.sx][*maze.sy];
+    // Maze {grid: }
+    // let mut new_grid = &maze.grid;
+    // let possible_num = new_grid[*maze.sx][*maze.sy];
 
 
     //loop over the adjacencies and add to the current value
-    for adj_place in adj {
-        let (new_sx, new_sy) = adj_place;
-        let next_maze = Maze {grid: new_grid, sx: &new_sx, sy: &new_sy, ex: &maze.ex, ey: &maze.ey};
-        let child_threads = thread::spawn(move || {
-            //thread that calls another recurse
-            println!("Spawning recurse thread");
-            //recurse(next_maze);
-
-        });
-    }
 
     // Debug adj:
     // println!("{:?}", adj);
@@ -74,7 +105,7 @@ fn find_adj(maze: &Maze) -> Vec<(usize, usize)> {
 
     for (x,y) in adj_inds {
         let c = maze.grid[y][x];
-        if c == 'o' || c == 'E' {
+        if c == 'o' || c == 'E' && !&maze.path.contains(&(x,y)) {
             vec.push((x,y));
         }
     }
