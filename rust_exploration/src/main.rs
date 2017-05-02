@@ -26,7 +26,7 @@ fn find_path(lines: &Vec<String>) {
     let (ex,ey) = find_end(&lines).expect("You didn't specify an end point!");
 
     let mut m = lines.iter().map(|l| l.chars().collect::<Vec<char>>()).collect();
-    // Debug maze: 
+    // Debug maze:
     // println!("{:?}", m);
     // println!("sx={0}, sy={1}", sx, sy);
     // println!("ex={0}, ey={1}", ex, ey);
@@ -37,6 +37,7 @@ fn find_path(lines: &Vec<String>) {
 
 fn recurse(maze: Maze) {
     let adj = find_adj(&maze);
+    //This works
     if adj.contains(&(*maze.ex, *maze.ey)) {
         println!("Found ending, returning maze");
     }
@@ -44,7 +45,7 @@ fn recurse(maze: Maze) {
     //make the new maze for next recursion
     let mut new_grid = &maze.grid;
     let possible_num = new_grid[*maze.sx][*maze.sy];
-    
+
 
     //loop over the adjacencies and add to the current value
     for adj_place in adj {
@@ -54,11 +55,11 @@ fn recurse(maze: Maze) {
             //thread that calls another recurse
             println!("Spawning recurse thread");
             //recurse(next_maze);
-        
+
         });
     }
 
-    // Debug adj: 
+    // Debug adj:
     // println!("{:?}", adj);
 
 }
@@ -72,7 +73,8 @@ fn find_adj(maze: &Maze) -> Vec<(usize, usize)> {
     let mut vec = Vec::new();
 
     for (x,y) in adj_inds {
-        if maze.grid[y][x] == 'o' {
+        let c = maze.grid[y][x];
+        if c == 'o' || c == 'E' {
             vec.push((x,y));
         }
     }
